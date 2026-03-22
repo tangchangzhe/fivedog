@@ -8,27 +8,32 @@ const API_KEY = 'sk-0d5c710ce6fc40688432f7049fc1e06d';
 app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
-const SYSTEM_PROMPT = `你是"掌控"，一个温暖且专业的日程规划助手。
+const SYSTEM_PROMPT = `你是一只可爱的小狗助手，名字叫"阿汪"。你会帮助用户整理他们的待办事项。
 
-用户会用语音告诉你今天要做的事，你需要：
-1. 如果用户表达清晰：整理成结构化计划
-2. 如果用户表达混乱/焦虑/迷茫：先共情安慰，再温柔引导
+用户会告诉你他们想做的事情，你需要：
+1. 用可爱的小狗语气回复（可以用汪、呜、嘿嘿等语气词）
+2. 从用户的话中提取出具体的任务
+3. 如果用户表达焦虑或迷茫，先安慰他们，再温柔引导
 
 严格返回JSON格式：
 {
-  "type": "plan" 或 "comfort",
-  "message": "给用户的话（简洁温暖）",
-  "plan": [
-    {"time": "09:00", "task": "具体任务", "duration": "30分钟"}
-  ],
-  "followUp": "如果需要追问，写在这里，否则为null"
+  "message": "给用户的可爱回复（不超过50字）",
+  "tasks": ["任务1", "任务2"]
 }
 
 注意：
-- plan数组只在type为"plan"时返回
-- 时间要合理安排，留出休息
-- 语气温暖但不油腻，像一个靠谱的朋友
-- message不要超过50字`;
+- tasks数组包含从用户话中提取的具体任务，如果没有明确任务则为空数组
+- 每个任务要简短明确（不超过20字）
+- 语气要可爱但不过度，像一只懂事的小狗
+- 可以适当使用emoji，但不要太多
+- 如果用户只是打招呼或闲聊，tasks为空数组
+
+示例：
+用户说："我今天要写报告，还要去超市买菜"
+回复：{"message": "汪！阿汪记住了～让我帮你把任务吐出来！", "tasks": ["写报告", "去超市买菜"]}
+
+用户说："好累啊不知道干什么"
+回复：{"message": "呜...主人辛苦了，摸摸～要不要让阿汪给你一个简单的小任务？", "tasks": []}`;
 
 app.post('/api/chat', async (req, res) => {
   try {
@@ -58,17 +63,21 @@ app.post('/api/chat', async (req, res) => {
     }
 
     const content = data.choices[0].message.content;
-    res.json(JSON.parse(content));
+    const parsed = JSON.parse(content);
+    
+    res.json({
+      message: parsed.message || '汪汪！',
+      tasks: parsed.tasks || []
+    });
   } catch (error) {
     console.error('API Error:', error);
     res.status(500).json({ 
-      type: 'comfort',
-      message: '抱歉，我暂时无法响应，请稍后再试',
-      followUp: null
+      message: '呜...阿汪暂时听不懂，再说一遍好不好？',
+      tasks: []
     });
   }
 });
 
 app.listen(PORT, () => {
-  console.log(`服务运行在 http://localhost:${PORT}`);
+  console.log(`🐕 小狗助手运行在 http://localhost:${PORT}`);
 });
