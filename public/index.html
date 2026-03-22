@@ -3,274 +3,1097 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>掌控 - 让今天清晰可见</title>
+  <title>小狗待办 - 汪汪帮你搞定一切！</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&display=swap');
     
-    * { font-family: 'Inter', -apple-system, sans-serif; }
+    * { 
+      font-family: 'Nunito', -apple-system, sans-serif; 
+      box-sizing: border-box;
+    }
     
     body {
-      background: linear-gradient(135deg, #0f0f0f 0%, #1a1a2e 50%, #16213e 100%);
+      background: linear-gradient(180deg, #87CEEB 0%, #E0F4FF 50%, #98D8AA 100%);
       min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ===== 小狗样式 ===== */
+    .dog-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      cursor: pointer;
+      transition: transform 0.3s;
     }
     
-    .glass {
-      background: rgba(255, 255, 255, 0.03);
-      backdrop-filter: blur(20px);
-      border: 1px solid rgba(255, 255, 255, 0.05);
+    .dog-container:hover {
+      transform: scale(1.05);
     }
     
-    .input-glass {
-      background: rgba(255, 255, 255, 0.05);
-      backdrop-filter: blur(10px);
+    .dog-container:active {
+      transform: scale(0.95);
+    }
+
+    .dog {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* 身体 */
+    .dog-body {
+      position: absolute;
+      width: 120px;
+      height: 90px;
+      background: linear-gradient(135deg, #F5DEB3 0%, #DEB887 100%);
+      border-radius: 60px 60px 50px 50px;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      box-shadow: inset -10px -10px 20px rgba(0,0,0,0.1);
+    }
+
+    /* 头部 */
+    .dog-head {
+      position: absolute;
+      width: 100px;
+      height: 90px;
+      background: linear-gradient(135deg, #F5DEB3 0%, #E8D5B7 100%);
+      border-radius: 50px 50px 40px 40px;
+      top: 15px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 2;
+      animation: headBob 2s ease-in-out infinite;
+    }
+
+    @keyframes headBob {
+      0%, 100% { transform: translateX(-50%) translateY(0) rotate(0deg); }
+      50% { transform: translateX(-50%) translateY(-3px) rotate(2deg); }
+    }
+
+    /* 耳朵 */
+    .dog-ear {
+      position: absolute;
+      width: 35px;
+      height: 50px;
+      background: linear-gradient(135deg, #C19A6B 0%, #A0826D 100%);
+      border-radius: 50% 50% 40% 40%;
+      top: 0;
+      z-index: 1;
     }
     
-    .message-in {
-      animation: fadeIn 0.3s ease-out;
+    .dog-ear.left {
+      left: 5px;
+      transform: rotate(-15deg);
+      animation: earWiggle 3s ease-in-out infinite;
     }
     
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    .dog-ear.right {
+      right: 5px;
+      transform: rotate(15deg);
+      animation: earWiggle 3s ease-in-out infinite 0.5s;
+    }
+
+    @keyframes earWiggle {
+      0%, 100% { transform: rotate(-15deg); }
+      50% { transform: rotate(-10deg); }
     }
     
-    @keyframes pulse-soft {
-      0%, 100% { opacity: 0.4; }
-      50% { opacity: 1; }
+    .dog-ear.right {
+      animation-name: earWiggleRight;
     }
     
-    .recording { animation: pulse-soft 1.5s ease-in-out infinite; }
-    
-    .plan-card {
-      background: linear-gradient(135deg, rgba(99, 102, 241, 0.1) 0%, rgba(139, 92, 246, 0.05) 100%);
-      border: 1px solid rgba(99, 102, 241, 0.2);
+    @keyframes earWiggleRight {
+      0%, 100% { transform: rotate(15deg); }
+      50% { transform: rotate(10deg); }
+    }
+
+    /* 眼睛 */
+    .dog-eyes {
+      position: absolute;
+      top: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 25px;
+    }
+
+    .dog-eye {
+      width: 20px;
+      height: 22px;
+      background: #2C1810;
+      border-radius: 50%;
+      position: relative;
+      animation: blink 4s infinite;
+    }
+
+    .dog-eye::before {
+      content: '';
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background: white;
+      border-radius: 50%;
+      top: 4px;
+      left: 4px;
+    }
+
+    @keyframes blink {
+      0%, 90%, 100% { transform: scaleY(1); }
+      95% { transform: scaleY(0.1); }
+    }
+
+    /* 鼻子 */
+    .dog-nose {
+      position: absolute;
+      width: 18px;
+      height: 14px;
+      background: #2C1810;
+      border-radius: 50% 50% 45% 45%;
+      top: 55px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* 嘴巴 */
+    .dog-mouth {
+      position: absolute;
+      top: 65px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 15px;
+    }
+
+    .dog-mouth::before,
+    .dog-mouth::after {
+      content: '';
+      position: absolute;
+      width: 15px;
+      height: 12px;
+      border: 3px solid #2C1810;
+      border-top: none;
+      border-radius: 0 0 15px 15px;
+      top: 0;
+    }
+
+    .dog-mouth::before { left: 0; }
+    .dog-mouth::after { right: 0; }
+
+    /* 舌头 */
+    .dog-tongue {
+      position: absolute;
+      width: 16px;
+      height: 0;
+      background: linear-gradient(180deg, #FF9999 0%, #FF6B6B 100%);
+      border-radius: 0 0 10px 10px;
+      top: 75px;
+      left: 50%;
+      transform: translateX(-50%);
+      transition: height 0.3s ease-out;
+      z-index: 3;
+      overflow: hidden;
+    }
+
+    .dog-tongue.out {
+      height: 30px;
+      animation: tonguePant 0.5s ease-in-out infinite;
+    }
+
+    @keyframes tonguePant {
+      0%, 100% { height: 30px; }
+      50% { height: 35px; }
+    }
+
+    /* 尾巴 */
+    .dog-tail {
+      position: absolute;
+      width: 15px;
+      height: 40px;
+      background: linear-gradient(180deg, #C19A6B 0%, #A0826D 100%);
+      border-radius: 10px;
+      bottom: 50px;
+      right: 25px;
+      transform-origin: bottom center;
+      animation: tailWag 0.4s ease-in-out infinite;
+    }
+
+    @keyframes tailWag {
+      0%, 100% { transform: rotate(-20deg); }
+      50% { transform: rotate(20deg); }
+    }
+
+    /* 腿 */
+    .dog-legs {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 40px;
+    }
+
+    .dog-leg {
+      width: 25px;
+      height: 30px;
+      background: linear-gradient(180deg, #F5DEB3 0%, #DEB887 100%);
+      border-radius: 0 0 12px 12px;
+    }
+
+    /* 腮红 */
+    .dog-blush {
+      position: absolute;
+      width: 15px;
+      height: 8px;
+      background: rgba(255, 150, 150, 0.5);
+      border-radius: 50%;
+      top: 50px;
     }
     
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    .dog-blush.left { left: 10px; }
+    .dog-blush.right { right: 10px; }
+
+    /* ===== 小狗状态动画 ===== */
+    
+    /* 吃东西动画 */
+    .dog.eating .dog-head {
+      animation: eatBob 0.3s ease-in-out infinite;
+    }
+    
+    @keyframes eatBob {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(5px); }
+    }
+    
+    .dog.eating .dog-mouth::before,
+    .dog.eating .dog-mouth::after {
+      animation: mouthChomp 0.3s ease-in-out infinite;
+    }
+    
+    @keyframes mouthChomp {
+      0%, 100% { height: 12px; }
+      50% { height: 6px; }
+    }
+
+    /* 拉星星动画 */
+    .dog.pooping .dog-body {
+      animation: poopSquat 0.5s ease-in-out;
+    }
+    
+    @keyframes poopSquat {
+      0%, 100% { transform: translateX(-50%) scaleY(1); }
+      50% { transform: translateX(-50%) scaleY(0.9); }
+    }
+
+    /* 开心动画 */
+    .dog.happy .dog-eye {
+      transform: scaleY(0.3);
+      border-radius: 50% 50% 0 0;
+    }
+    
+    .dog.happy .dog-tail {
+      animation: tailWagFast 0.2s ease-in-out infinite;
+    }
+    
+    @keyframes tailWagFast {
+      0%, 100% { transform: rotate(-30deg); }
+      50% { transform: rotate(30deg); }
+    }
+
+    /* ===== 纸条样式 ===== */
+    .note {
+      position: relative;
+      background: linear-gradient(135deg, #FFFEF0 0%, #FFF8DC 100%);
+      border-radius: 8px;
+      padding: 16px 20px;
+      box-shadow: 2px 4px 12px rgba(0,0,0,0.15);
+      transform-origin: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      border: 1px solid rgba(200, 180, 140, 0.3);
+    }
+
+    .note::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: repeating-linear-gradient(
+        90deg,
+        transparent,
+        transparent 10px,
+        rgba(200, 180, 140, 0.3) 10px,
+        rgba(200, 180, 140, 0.3) 12px
+      );
+    }
+
+    .note:hover {
+      transform: scale(1.02) rotate(-1deg);
+      box-shadow: 4px 6px 16px rgba(0,0,0,0.2);
+    }
+
+    .note.spit-out {
+      animation: spitNote 0.8s ease-out forwards;
+    }
+
+    @keyframes spitNote {
+      0% { 
+        opacity: 0; 
+        transform: translateY(-50px) scale(0.3) rotate(-10deg);
+      }
+      60% { 
+        transform: translateY(10px) scale(1.1) rotate(5deg);
+      }
+      100% { 
+        opacity: 1; 
+        transform: translateY(0) scale(1) rotate(0deg);
+      }
+    }
+
+    .note.crumple {
+      animation: crumpleNote 0.6s ease-in forwards;
+    }
+
+    @keyframes crumpleNote {
+      0% { transform: scale(1) rotate(0deg); }
+      30% { transform: scale(1.1) rotate(-5deg); }
+      100% { 
+        transform: scale(0.3) rotate(360deg) translateY(-100px);
+        opacity: 0;
+      }
+    }
+
+    /* ===== 星星瓶样式 ===== */
+    .star-jar {
+      position: relative;
+      width: 80px;
+      height: 120px;
+    }
+
+    .jar-body {
+      position: absolute;
+      bottom: 0;
+      width: 80px;
+      height: 100px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0.2) 100%);
+      border: 3px solid rgba(255,255,255,0.6);
+      border-radius: 10px 10px 20px 20px;
+      overflow: hidden;
+      backdrop-filter: blur(5px);
+    }
+
+    .jar-lid {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 25px;
+      background: linear-gradient(135deg, #8B4513 0%, #A0522D 100%);
+      border-radius: 5px 5px 0 0;
+    }
+
+    .jar-stars {
+      position: absolute;
+      bottom: 5px;
+      left: 5px;
+      right: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 3px;
+      justify-content: center;
+      align-content: flex-end;
+    }
+
+    .star {
+      width: 20px;
+      height: 20px;
+      position: relative;
+    }
+
+    .star::before {
+      content: '⭐';
+      font-size: 16px;
+      filter: drop-shadow(0 0 3px rgba(255, 215, 0, 0.8));
+    }
+
+    .star.new {
+      animation: starDrop 0.8s ease-out;
+    }
+
+    @keyframes starDrop {
+      0% { 
+        transform: translateY(-200px) scale(2) rotate(0deg);
+        opacity: 0;
+      }
+      50% {
+        opacity: 1;
+      }
+      80% {
+        transform: translateY(10px) scale(1.2) rotate(360deg);
+      }
+      100% { 
+        transform: translateY(0) scale(1) rotate(360deg);
+      }
+    }
+
+    /* ===== 飞行星星 ===== */
+    .flying-star {
+      position: fixed;
+      font-size: 30px;
+      z-index: 1000;
+      pointer-events: none;
+      filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.8));
+    }
+
+    /* ===== 聊天气泡 ===== */
+    .chat-bubble {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: white;
+      border-radius: 20px;
+      padding: 12px 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      max-width: 200px;
+      text-align: center;
+      font-size: 14px;
+      color: #333;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .chat-bubble::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border: 10px solid transparent;
+      border-top-color: white;
+      border-bottom: none;
+    }
+
+    .chat-bubble.show {
+      opacity: 1;
+      animation: bubblePop 0.3s ease-out;
+    }
+
+    @keyframes bubblePop {
+      0% { transform: translateX(-50%) scale(0.8); }
+      50% { transform: translateX(-50%) scale(1.05); }
+      100% { transform: translateX(-50%) scale(1); }
+    }
+
+    /* ===== 输入框样式 ===== */
+    .chat-input-container {
+      background: white;
+      border-radius: 25px;
+      padding: 8px 8px 8px 20px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .chat-input {
+      flex: 1;
+      border: none;
+      outline: none;
+      font-size: 15px;
+      color: #333;
+    }
+
+    .chat-input::placeholder {
+      color: #aaa;
+    }
+
+    .send-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #FFB347 0%, #FF8C00 100%);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .send-btn:hover {
+      transform: scale(1.1);
+      box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
+    }
+
+    .send-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* ===== 按钮样式 ===== */
+    .action-btn {
+      background: linear-gradient(135deg, #98D8AA 0%, #7BC88C 100%);
+      border: none;
+      border-radius: 25px;
+      padding: 12px 24px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(123, 200, 140, 0.4);
+      transition: all 0.3s;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(123, 200, 140, 0.5);
+    }
+
+    .action-btn:active {
+      transform: translateY(0);
+    }
+
+    .action-btn.secondary {
+      background: linear-gradient(135deg, #FFB347 0%, #FF8C00 100%);
+      box-shadow: 0 4px 15px rgba(255, 140, 0, 0.4);
+    }
+
+    .action-btn.secondary:hover {
+      box-shadow: 0 6px 20px rgba(255, 140, 0, 0.5);
+    }
+
+    .action-btn.complete {
+      background: linear-gradient(135deg, #87CEEB 0%, #5DADE2 100%);
+      box-shadow: 0 4px 15px rgba(93, 173, 226, 0.4);
+    }
+
+    /* ===== 草地装饰 ===== */
+    .grass {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 60px;
+      background: linear-gradient(180deg, #7BC88C 0%, #5DAB6F 100%);
+      z-index: -1;
+    }
+
+    .grass::before {
+      content: '';
+      position: absolute;
+      top: -20px;
+      left: 0;
+      right: 0;
+      height: 40px;
+      background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 40'%3E%3Cpath fill='%237BC88C' d='M0 40 Q10 20 20 40 Q30 15 40 40 Q50 10 60 40 Q70 20 80 40 Q90 15 100 40 L100 40 L0 40Z'/%3E%3C/svg%3E");
+      background-size: 100px 40px;
+      background-repeat: repeat-x;
+    }
+
+    /* ===== 云朵装饰 ===== */
+    .cloud {
+      position: fixed;
+      background: white;
+      border-radius: 50%;
+      opacity: 0.8;
+      z-index: -1;
+    }
+
+    .cloud::before,
+    .cloud::after {
+      content: '';
+      position: absolute;
+      background: white;
+      border-radius: 50%;
+    }
+
+    .cloud-1 {
+      width: 80px;
+      height: 40px;
+      top: 10%;
+      left: 10%;
+      animation: cloudFloat 20s linear infinite;
+    }
+
+    .cloud-1::before {
+      width: 50px;
+      height: 50px;
+      top: -25px;
+      left: 15px;
+    }
+
+    .cloud-2 {
+      width: 100px;
+      height: 50px;
+      top: 15%;
+      right: 15%;
+      animation: cloudFloat 25s linear infinite reverse;
+    }
+
+    .cloud-2::before {
+      width: 60px;
+      height: 60px;
+      top: -30px;
+      left: 20px;
+    }
+
+    @keyframes cloudFloat {
+      0% { transform: translateX(-100px); }
+      100% { transform: translateX(calc(100vw + 100px)); }
+    }
+
+    /* ===== 提示文字 ===== */
+    .hint {
+      color: #666;
+      font-size: 14px;
+      text-align: center;
+      opacity: 0.8;
+    }
+
+    /* ===== 统计数字 ===== */
+    .stat-number {
+      font-size: 24px;
+      font-weight: 800;
+      color: #FFB347;
+      text-shadow: 2px 2px 0 rgba(0,0,0,0.1);
+    }
   </style>
 </head>
-<body class="text-white">
-  <div class="max-w-2xl mx-auto px-4 py-6 sm:px-6 sm:py-12">
-    <!-- Header -->
-    <header class="text-center mb-6 sm:mb-12">
-      <h1 class="text-2xl sm:text-4xl font-light tracking-tight mb-2 sm:mb-3">掌控</h1>
-      <p class="text-white/40 text-xs sm:text-sm">说出你的计划，让今天清晰可见</p>
-      <button onclick="resetChat()" class="mt-3 sm:mt-4 text-white/20 text-xs hover:text-white/50 transition">重新开始</button>
+<body class="min-h-screen">
+  <!-- 装饰元素 -->
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="grass"></div>
+
+  <div class="max-w-lg mx-auto px-4 py-6">
+    <!-- 标题 -->
+    <header class="text-center mb-6">
+      <h1 class="text-3xl font-bold text-amber-800 mb-2">🐕 小狗待办</h1>
+      <p class="text-amber-700/70 text-sm">点击小狗获取任务，完成后喂给它！</p>
     </header>
 
-    <!-- Chat Container -->
-    <div id="chat" class="space-y-3 sm:space-y-4 mb-4 sm:mb-6 min-h-[150px] max-h-[40vh] sm:max-h-[50vh] overflow-y-auto pr-1 sm:pr-2">
-      <!-- Messages will appear here -->
-    </div>
-
-    <!-- Current Plan Display -->
-    <div id="planDisplay" class="hidden mb-4 sm:mb-6">
-      <div class="flex items-center justify-between mb-3 sm:mb-4">
-        <span class="text-white/60 text-xs sm:text-sm">今日计划</span>
-        <button onclick="clearPlan()" class="text-white/30 text-xs hover:text-white/60 transition">清除</button>
+    <!-- 星星瓶区域 -->
+    <div class="flex justify-end mb-4">
+      <div class="flex items-center gap-3 bg-white/50 backdrop-blur rounded-2xl px-4 py-2">
+        <div class="star-jar" id="starJar">
+          <div class="jar-lid"></div>
+          <div class="jar-body">
+            <div class="jar-stars" id="jarStars"></div>
+          </div>
+        </div>
+        <div class="text-center">
+          <div class="stat-number" id="starCount">0</div>
+          <div class="text-xs text-amber-700/70">颗星星</div>
+        </div>
       </div>
-      <div id="planCards" class="space-y-2"></div>
     </div>
 
-    <!-- Input Area -->
-    <div class="glass rounded-xl sm:rounded-2xl p-3 sm:p-4">
-      <div class="flex items-center gap-2 sm:gap-3">
-        <button 
-          id="micBtn"
-          onclick="toggleRecording()"
-          class="w-8 h-8 rounded-full input-glass flex items-center justify-center transition-all hover:bg-white/10 flex-shrink-0"
+    <!-- 小狗区域 -->
+    <div class="flex flex-col items-center mb-6">
+      <div class="dog-container" id="dogContainer" onclick="interactWithDog()">
+        <div class="chat-bubble" id="chatBubble">汪汪！点我获取任务！</div>
+        <div class="dog" id="dog">
+          <div class="dog-ear left"></div>
+          <div class="dog-ear right"></div>
+          <div class="dog-head">
+            <div class="dog-eyes">
+              <div class="dog-eye"></div>
+              <div class="dog-eye"></div>
+            </div>
+            <div class="dog-blush left"></div>
+            <div class="dog-blush right"></div>
+            <div class="dog-nose"></div>
+            <div class="dog-mouth"></div>
+            <div class="dog-tongue" id="dogTongue"></div>
+          </div>
+          <div class="dog-body"></div>
+          <div class="dog-tail"></div>
+          <div class="dog-legs">
+            <div class="dog-leg"></div>
+            <div class="dog-leg"></div>
+          </div>
+        </div>
+      </div>
+      <p class="hint mt-2" id="dogHint">👆 点击小狗获取任务</p>
+    </div>
+
+    <!-- 当前任务纸条 -->
+    <div id="currentNote" class="hidden mb-6">
+      <div class="note spit-out" id="noteCard">
+        <div class="text-xs text-amber-600/60 mb-1">📝 待办事项</div>
+        <div class="text-lg font-semibold text-amber-900" id="noteText"></div>
+        <div class="mt-4 flex gap-3 justify-center">
+          <button class="action-btn complete" onclick="completeTask()">
+            ✅ 完成了！喂给小狗
+          </button>
+          <button class="action-btn secondary" onclick="skipTask()">
+            🔄 换一个
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 聊天输入区域 -->
+    <div class="mb-6">
+      <div class="chat-input-container">
+        <input 
+          type="text" 
+          id="chatInput" 
+          class="chat-input"
+          placeholder="告诉小狗你想做什么..."
+          onkeydown="if(event.key==='Enter') addCustomTask()"
         >
-          <svg id="micIcon" class="w-4 h-4 text-white/60" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/>
+        <button class="send-btn" onclick="addCustomTask()">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M22 2L11 13M22 2L15 22L11 13M11 13L2 9L22 2"/>
           </svg>
         </button>
-        <input 
-          id="input"
-          type="text" 
-          placeholder="说说今天要做什么..."
-          class="flex-1 bg-transparent outline-none text-white placeholder-white/30 text-xs sm:text-sm min-w-0"
-          onkeydown="if(event.key==='Enter')sendMessage()"
-        >
-        <button 
-          onclick="sendMessage()"
-          class="text-white/40 hover:text-white transition text-xs sm:text-sm px-2 sm:px-4 py-2 flex-shrink-0"
-        >
-          发送
-        </button>
       </div>
-      <div id="recordingHint" class="hidden text-center text-white/30 text-xs mt-2 sm:mt-3">正在聆听...</div>
+      <p class="hint mt-2">💬 或者告诉小狗你想做的事</p>
     </div>
 
-    <!-- Footer -->
-    <div class="text-center mt-8 sm:mt-12">
-      <p class="text-white/30 text-xs sm:text-sm tracking-wide mb-4 sm:mb-6">你的一天，由你定义</p>
-      <p class="text-white/15 text-xs">FIVE</p>
+    <!-- 任务队列预览 -->
+    <div id="taskQueue" class="hidden">
+      <div class="bg-white/30 backdrop-blur rounded-2xl p-4">
+        <div class="flex items-center justify-between mb-3">
+          <span class="text-amber-800 font-semibold">📋 待处理任务</span>
+          <span class="text-amber-600/70 text-sm" id="queueCount">0 个</span>
+        </div>
+        <div id="queueList" class="space-y-2"></div>
+      </div>
     </div>
   </div>
 
   <script>
-    let recognition = null;
-    let isRecording = false;
-    let messages = [];
-    let currentPlan = null;
+    // ===== 数据存储 =====
+    let tasks = [];
+    let completedCount = 0;
+    let currentTask = null;
+    let dogState = 'idle';
 
-    // Initialize Speech Recognition
-    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      recognition = new SpeechRecognition();
-      recognition.lang = 'zh-CN';
-      recognition.continuous = false;
-      recognition.interimResults = false;
+    // 预设的随机任务
+    const randomTasks = [
+      "喝一杯水 💧",
+      "站起来伸个懒腰 🙆",
+      "给朋友发条消息 📱",
+      "整理一下桌面 🗂️",
+      "做5个深呼吸 🌬️",
+      "看看窗外的风景 🌳",
+      "写下今天感恩的事 📝",
+      "吃一个水果 🍎",
+      "听一首喜欢的歌 🎵",
+      "回复一封邮件 ✉️",
+      "喝杯咖啡或茶 ☕",
+      "出去走走5分钟 🚶",
+      "把一件小事做完 ✨",
+      "给自己一个微笑 😊",
+      "整理手机相册 📸",
+      "做几个拉伸动作 🧘",
+      "列出明天要做的事 📋",
+      "清理一下浏览器标签 🌐",
+      "给家人打个电话 📞",
+      "读几页书 📚"
+    ];
 
-      recognition.onresult = (event) => {
-        const transcript = event.results[0][0].transcript;
-        document.getElementById('input').value = transcript;
-        sendMessage();
-      };
+    // 小狗的话语
+    const dogSayings = {
+      idle: [
+        "汪汪！点我获取任务！",
+        "主人，今天想做什么呀？",
+        "汪！我肚子里有好多任务呢！",
+        "摸摸我，我会给你惊喜！"
+      ],
+      givingTask: [
+        "接好啦！这是给你的任务～",
+        "汪！吐给你一个任务！",
+        "噗～纸条来啦！"
+      ],
+      eating: [
+        "呜姆呜姆...好吃！",
+        "谢谢投喂！嘎吱嘎吱～",
+        "汪！纸条真香！"
+      ],
+      pooping: [
+        "嗯嗯...要拉星星了...",
+        "憋不住了...星星来啦！"
+      ],
+      happy: [
+        "汪汪！你真棒！🌟",
+        "太厉害了！继续加油！",
+        "主人最棒了！摇尾巴～"
+      ],
+      noTask: [
+        "汪...肚子空空的，没任务了",
+        "任务都被你完成啦！",
+        "告诉我你想做什么吧！"
+      ]
+    };
 
-      recognition.onend = () => {
-        stopRecording();
-      };
+    // ===== DOM 元素 =====
+    const dog = document.getElementById('dog');
+    const dogTongue = document.getElementById('dogTongue');
+    const chatBubble = document.getElementById('chatBubble');
+    const currentNote = document.getElementById('currentNote');
+    const noteCard = document.getElementById('noteCard');
+    const noteText = document.getElementById('noteText');
+    const starCount = document.getElementById('starCount');
+    const jarStars = document.getElementById('jarStars');
+    const dogHint = document.getElementById('dogHint');
+    const taskQueue = document.getElementById('taskQueue');
+    const queueList = document.getElementById('queueList');
+    const queueCount = document.getElementById('queueCount');
+    const chatInput = document.getElementById('chatInput');
 
-      recognition.onerror = () => {
-        stopRecording();
-      };
+    // ===== 初始化 =====
+    function init() {
+      showBubble(getRandomSaying('idle'));
+      updateStarDisplay();
+      updateQueueDisplay();
     }
 
-    function toggleRecording() {
-      if (!recognition) {
-        alert('您的浏览器不支持语音识别');
+    // ===== 工具函数 =====
+    function getRandomSaying(type) {
+      const sayings = dogSayings[type];
+      return sayings[Math.floor(Math.random() * sayings.length)];
+    }
+
+    function getRandomTask() {
+      return randomTasks[Math.floor(Math.random() * randomTasks.length)];
+    }
+
+    function showBubble(text, duration = 3000) {
+      chatBubble.textContent = text;
+      chatBubble.classList.add('show');
+      
+      if (duration > 0) {
+        setTimeout(() => {
+          chatBubble.classList.remove('show');
+        }, duration);
+      }
+    }
+
+    // ===== 与小狗交互 =====
+    function interactWithDog() {
+      if (dogState !== 'idle') return;
+      
+      if (currentTask) {
+        showBubble("你还有任务没完成呢！汪！");
         return;
       }
-      
-      if (isRecording) {
-        recognition.stop();
-        stopRecording();
+
+      // 如果任务队列有任务，从队列取；否则随机生成
+      let task;
+      if (tasks.length > 0) {
+        task = tasks.shift();
+        updateQueueDisplay();
       } else {
-        recognition.start();
-        startRecording();
+        task = getRandomTask();
+      }
+
+      spitOutTask(task);
+    }
+
+    // ===== 吐出任务 =====
+    function spitOutTask(task) {
+      dogState = 'giving';
+      currentTask = task;
+
+      // 小狗吐舌头
+      dogTongue.classList.add('out');
+      showBubble(getRandomSaying('givingTask'));
+
+      // 显示纸条
+      setTimeout(() => {
+        noteText.textContent = task;
+        noteCard.classList.remove('crumple');
+        noteCard.classList.add('spit-out');
+        currentNote.classList.remove('hidden');
+        dogHint.textContent = "👇 完成任务后点击按钮";
+      }, 300);
+
+      // 舌头收回
+      setTimeout(() => {
+        dogTongue.classList.remove('out');
+        dogState = 'idle';
+      }, 1000);
+    }
+
+    // ===== 完成任务 =====
+    function completeTask() {
+      if (!currentTask || dogState !== 'idle') return;
+
+      dogState = 'eating';
+
+      // 纸条团起来飞向小狗
+      noteCard.classList.remove('spit-out');
+      noteCard.classList.add('crumple');
+
+      // 小狗吃东西
+      dog.classList.add('eating');
+      showBubble(getRandomSaying('eating'), 1500);
+
+      setTimeout(() => {
+        currentNote.classList.add('hidden');
+        dog.classList.remove('eating');
+        
+        // 小狗拉星星
+        dogState = 'pooping';
+        dog.classList.add('pooping');
+        showBubble(getRandomSaying('pooping'), 1500);
+
+        setTimeout(() => {
+          dog.classList.remove('pooping');
+          
+          // 创建飞行星星
+          createFlyingStar();
+          
+          // 小狗开心
+          dog.classList.add('happy');
+          showBubble(getRandomSaying('happy'), 2000);
+
+          setTimeout(() => {
+            dog.classList.remove('happy');
+            dogState = 'idle';
+            currentTask = null;
+            dogHint.textContent = "👆 点击小狗获取任务";
+            
+            if (tasks.length === 0) {
+              setTimeout(() => {
+                showBubble(getRandomSaying('noTask'));
+              }, 500);
+            }
+          }, 2000);
+
+        }, 1500);
+      }, 600);
+    }
+
+    // ===== 创建飞行星星 =====
+    function createFlyingStar() {
+      const dogRect = document.getElementById('dogContainer').getBoundingClientRect();
+      const jarRect = document.getElementById('starJar').getBoundingClientRect();
+
+      const star = document.createElement('div');
+      star.className = 'flying-star';
+      star.textContent = '⭐';
+      star.style.left = `${dogRect.left + dogRect.width / 2 - 15}px`;
+      star.style.top = `${dogRect.bottom - 30}px`;
+      document.body.appendChild(star);
+
+      // 动画飞向星星瓶
+      const animation = star.animate([
+        { 
+          transform: 'scale(1) rotate(0deg)',
+          left: `${dogRect.left + dogRect.width / 2 - 15}px`,
+          top: `${dogRect.bottom - 30}px`
+        },
+        {
+          transform: 'scale(1.5) rotate(180deg)',
+          left: `${(dogRect.left + jarRect.left) / 2}px`,
+          top: `${Math.min(dogRect.top, jarRect.top) - 50}px`
+        },
+        { 
+          transform: 'scale(1) rotate(360deg)',
+          left: `${jarRect.left + jarRect.width / 2 - 15}px`,
+          top: `${jarRect.top + 50}px`
+        }
+      ], {
+        duration: 800,
+        easing: 'ease-in-out'
+      });
+
+      animation.onfinish = () => {
+        star.remove();
+        addStarToJar();
+      };
+    }
+
+    // ===== 添加星星到瓶子 =====
+    function addStarToJar() {
+      completedCount++;
+      starCount.textContent = completedCount;
+      
+      const star = document.createElement('div');
+      star.className = 'star new';
+      jarStars.appendChild(star);
+
+      // 移除动画类
+      setTimeout(() => {
+        star.classList.remove('new');
+      }, 800);
+    }
+
+    // ===== 更新星星显示 =====
+    function updateStarDisplay() {
+      starCount.textContent = completedCount;
+    }
+
+    // ===== 跳过任务 =====
+    function skipTask() {
+      if (!currentTask) return;
+
+      noteCard.classList.add('crumple');
+      
+      setTimeout(() => {
+        currentNote.classList.add('hidden');
+        noteCard.classList.remove('crumple');
+        currentTask = null;
+        dogHint.textContent = "👆 点击小狗获取任务";
+        showBubble("好吧，换一个试试！汪！");
+      }, 600);
+    }
+
+    // ===== 添加自定义任务 =====
+    function addCustomTask() {
+      const input = chatInput.value.trim();
+      if (!input) return;
+
+      tasks.push(input);
+      chatInput.value = '';
+      
+      showBubble(`汪！收到啦！"${input.substring(0, 10)}${input.length > 10 ? '...' : ''}"`, 2500);
+      updateQueueDisplay();
+
+      // 如果当前没任务，自动吐出
+      if (!currentTask && dogState === 'idle') {
+        setTimeout(() => {
+          interactWithDog();
+        }, 1000);
       }
     }
 
-    function startRecording() {
-      isRecording = true;
-      document.getElementById('micBtn').classList.add('bg-white/20');
-      document.getElementById('micIcon').classList.add('recording', 'text-indigo-400');
-      document.getElementById('recordingHint').classList.remove('hidden');
-    }
+    // ===== 更新任务队列显示 =====
+    function updateQueueDisplay() {
+      if (tasks.length === 0) {
+        taskQueue.classList.add('hidden');
+        return;
+      }
 
-    function stopRecording() {
-      isRecording = false;
-      document.getElementById('micBtn').classList.remove('bg-white/20');
-      document.getElementById('micIcon').classList.remove('recording', 'text-indigo-400');
-      document.getElementById('recordingHint').classList.add('hidden');
-    }
-
-    function addMessage(content, isUser = false) {
-      const chat = document.getElementById('chat');
-      const div = document.createElement('div');
-      div.className = `message-in ${isUser ? 'text-right' : ''}`;
-      div.innerHTML = `
-        <div class="inline-block max-w-[85%] ${isUser ? 'bg-indigo-500/20 text-white' : 'glass text-white/80'} rounded-2xl px-4 py-3 text-sm">
-          ${content}
-        </div>
-      `;
-      chat.appendChild(div);
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    function renderPlan(plan) {
-      if (!plan || plan.length === 0) return;
+      taskQueue.classList.remove('hidden');
+      queueCount.textContent = `${tasks.length} 个`;
       
-      currentPlan = plan;
-      const display = document.getElementById('planDisplay');
-      const cards = document.getElementById('planCards');
-      
-      cards.innerHTML = plan.map((item, i) => `
-        <div class="plan-card rounded-lg sm:rounded-xl px-3 sm:px-4 py-2 sm:py-3 message-in" style="animation-delay: ${i * 0.1}s">
-          <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2 sm:gap-3 min-w-0">
-              <span class="text-indigo-400/80 text-xs sm:text-sm font-medium flex-shrink-0">${item.time}</span>
-              <span class="text-white/80 text-xs sm:text-sm truncate">${item.task}</span>
-            </div>
-            ${item.duration ? `<span class="text-white/30 text-xs flex-shrink-0 hidden sm:block">${item.duration}</span>` : ''}
-          </div>
+      queueList.innerHTML = tasks.map((task, index) => `
+        <div class="bg-white/50 rounded-lg px-3 py-2 text-sm text-amber-800 flex items-center justify-between">
+          <span class="truncate">${task}</span>
+          <button onclick="removeTask(${index})" class="text-amber-400 hover:text-amber-600 ml-2">✕</button>
         </div>
       `).join('');
-      
-      display.classList.remove('hidden');
     }
 
-    function clearPlan() {
-      currentPlan = null;
-      document.getElementById('planDisplay').classList.add('hidden');
+    // ===== 移除队列中的任务 =====
+    function removeTask(index) {
+      tasks.splice(index, 1);
+      updateQueueDisplay();
     }
 
-    function resetChat() {
-      messages = [];
-      currentPlan = null;
-      document.getElementById('chat').innerHTML = '';
-      document.getElementById('planDisplay').classList.add('hidden');
-    }
-
-    async function sendMessage() {
-      const input = document.getElementById('input');
-      const text = input.value.trim();
-      if (!text) return;
-
-      input.value = '';
-      addMessage(text, true);
-      messages.push({ role: 'user', content: text });
-
-      // Show loading
-      const loadingId = Date.now();
-      const chat = document.getElementById('chat');
-      const loadingDiv = document.createElement('div');
-      loadingDiv.id = `loading-${loadingId}`;
-      loadingDiv.className = 'message-in';
-      loadingDiv.innerHTML = `
-        <div class="inline-block glass rounded-2xl px-4 py-3 text-sm text-white/40">
-          思考中...
-        </div>
-      `;
-      chat.appendChild(loadingDiv);
-
-      try {
-        const res = await fetch('/api/chat.php', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages })
-        });
-
-        const data = await res.json();
-        
-        // Remove loading
-        document.getElementById(`loading-${loadingId}`)?.remove();
-
-        // Add AI response
-        addMessage(data.message);
-        messages.push({ role: 'assistant', content: data.message });
-
-        // Render plan if available
-        if (data.type === 'plan' && data.plan) {
-          renderPlan(data.plan);
-        }
-
-        // Show follow up if any
-        if (data.followUp && data.followUp !== 'null' && data.followUp !== null) {
-          setTimeout(() => {
-            addMessage(data.followUp);
-          }, 800);
-        }
-
-      } catch (error) {
-        document.getElementById(`loading-${loadingId}`)?.remove();
-        addMessage('网络似乎有点问题，再试一次？');
-      }
-    }
+    // ===== 启动 =====
+    init();
   </script>
 </body>
 </html>
