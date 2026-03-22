@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>掌控 - 小狗陪你做计划</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap');
+    
+    * { font-family: 'Inter', -apple-system, sans-serif; }
+    
+    body {
+      background: linear-gradient(135deg, #0a0a0f 0%, #12121f 50%, #0d1117 100%);
+      min-height: 100vh;
+      overflow: hidden;
+    }
+    
+    .glass {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    
+    .glow {
+      box-shadow: 0 0 30px rgba(139, 92, 246, 0.1), 0 0 60px rgba(99, 102, 241, 0.05);
+    }
+
+    .star-jar {
+      position: relative;
+      width: 80px;
+      height: 120px;
+      background: linear-gradient(180deg, rgba(255,255,255,0.05) 0%, rgba(255,255,255,0.02) 100%);
+      border: 2px solid rgba(255,255,255,0.1);
+      border-radius: 10px 10px 30px 30px;
+      overflow: hidden;
+    }
+    
+    .star-jar::before {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 50px;
+      height: 15px;
+      background: rgba(255,255,255,0.1);
+      border-radius: 5px 5px 0 0;
+      border: 2px solid rgba(255,255,255,0.1);
+      border-bottom: none;
+    }
+    
+    .stars-container {
+      position: absolute;
+      bottom: 5px;
+      left: 5px;
+      right: 5px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 3px;
+    }
+    
+    .mini-star {
+      width: 12px;
+      height: 12px;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      animation: starGlow 2s ease-in-out infinite;
+    }
+    
+    @keyframes starGlow {
+      0%, 100% { filter: brightness(1); }
+      50% { filter: brightness(1.3); }
+    }
+    
+    .dog-container {
+      position: relative;
+      width: 200px;
+      height: 200px;
+      cursor: pointer;
+      transition: transform 0.3s;
+    }
+    
+    .dog-container:hover {
+      transform: scale(1.05);
+    }
+    
+    .dog-container:active {
+      transform: scale(0.95);
+    }
+    
+    .dog-body {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 80px;
+      background: linear-gradient(135deg, #d4a574 0%, #c4956a 100%);
+      border-radius: 50px 50px 40px 40px;
+    }
+    
+    .dog-head {
+      position: absolute;
+      bottom: 70px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 90px;
+      height: 85px;
+      background: linear-gradient(135deg, #e8c4a0 0%, #d4a574 100%);
+      border-radius: 45px 45px 35px 35px;
+    }
+    
+    .dog-ear {
+      position: absolute;
+      width: 35px;
+      height: 50px;
+      background: linear-gradient(135deg, #c4956a 0%, #b8896a 100%);
+      border-radius: 50% 50% 40% 40%;
+    }
+    
+    .dog-ear.left {
+      top: 60px;
+      left: 30px;
+      transform: rotate(-20deg);
+    }
+    
+    .dog-ear.right {
+      top: 60px;
+      right: 30px;
+      transform: rotate(20deg);
+    }
+    
+    .dog-eye {
+      position: absolute;
+      width: 18px;
+      height: 22px;
+      background: #2a2a2a;
+      border-radius: 50%;
+      top: 100px;
+    }
+    
+    .dog-eye.left { left: 60px; }
+    .dog-eye.right { right: 60px; }
+    
+    .dog-eye::after {
+      content: '';
+      position: absolute;
+      width: 6px;
+      height: 6px;
+      background: white;
+      border-radius: 50%;
+      top: 4px;
+      left: 4px;
+    }
+    
+    .dog-nose {
+      position: absolute;
+      top: 125px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 15px;
+      background: #3a3a3a;
+      border-radius: 50% 50% 50% 50%;
+    }
+    
+    .dog-mouth {
+      position: absolute;
+      top: 138px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 30px;
+      height: 15px;
+      border: 3px solid #3a3a3a;
+      border-top: none;
+      border-radius: 0 0 15px 15px;
+    }
+    
+    .dog-tongue {
+      position: absolute;
+      top: 140px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 16px;
+      height: 0;
+      background: linear-gradient(180deg, #ff8a8a 0%, #ff6b6b 100%);
+      border-radius: 8px 8px 10px 10px;
+      transition: height 0.3s ease-out;
+      overflow: visible;
+    }
+    
+    .dog-tongue.out {
+      height: 25px;
+      animation: tongueWag 0.5s ease-in-out infinite;
+    }
+    
+    @keyframes tongueWag {
+      0%, 100% { transform: translateX(-50%) rotate(-3deg); }
+      50% { transform: translateX(-50%) rotate(3deg); }
+    }
+    
+    .dog-tail {
+      position: absolute;
+      bottom: 50px;
+      right: 35px;
+      width: 15px;
+      height: 40px;
+      background: linear-gradient(135deg, #d4a574 0%, #c4956a 100%);
+      border-radius: 10px;
+      transform-origin: bottom center;
+      animation: tailWag 0.4s ease-in-out infinite;
+    }
+    
+    @keyframes tailWag {
+      0%, 100% { transform: rotate(-15deg); }
+      50% { transform: rotate(15deg); }
+    }
+    
+    .dog-leg {
+      position: absolute;
+      bottom: 0;
+      width: 22px;
+      height: 30px;
+      background: linear-gradient(135deg, #d4a574 0%, #c4956a 100%);
+      border-radius: 10px 10px 8px 8px;
+    }
+    
+    .dog-leg.front-left { left: 55px; }
+    .dog-leg.front-right { right: 55px; }
+    .dog-leg.back-left { left: 45px; }
+    .dog-leg.back-right { right: 45px; }
+    
+    .dog-blush {
+      position: absolute;
+      width: 15px;
+      height: 8px;
+      background: rgba(255, 150, 150, 0.5);
+      border-radius: 50%;
+      top: 120px;
+    }
+    
+    .dog-blush.left { left: 48px; }
+    .dog-blush.right { right: 48px; }
+    
+    .paper-note {
+      position: absolute;
+      width: 160px;
+      padding: 12px 15px;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);
+      border-radius: 8px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+      color: #44403c;
+      font-size: 13px;
+      transform-origin: center center;
+      cursor: grab;
+      z-index: 10;
+      transition: all 0.3s;
+    }
+    
+    .paper-note:hover {
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+    }
+    
+    .paper-note.crumpled {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #fef3c7 0%, #fde68a 50%, #fcd34d 100%);
+      animation: crumple 0.3s ease-out forwards;
+    }
+    
+    @keyframes crumple {
+      0% { transform: scale(1); }
+      50% { transform: scale(0.8) rotate(180deg); }
+      100% { transform: scale(0.6) rotate(360deg); }
+    }
+    
+    .paper-note.spit-out {
+      animation: spitOut 0.5s ease-out forwards;
+    }
+    
+    @keyframes spitOut {
+      0% { 
+        opacity: 0;
+        transform: translateY(-20px) scale(0.3);
+      }
+      50% {
+        opacity: 1;
+        transform: translateY(10px) scale(1.1);
+      }
+      100% { 
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    
+    .paper-note.eaten {
+      animation: eaten 0.5s ease-in forwards;
+    }
+    
+    @keyframes eaten {
+      0% { transform: scale(1); }
+      100% { 
+        transform: scale(0) translateY(-50px);
+        opacity: 0;
+      }
+    }
+    
+    .falling-star {
+      position: fixed;
+      width: 25px;
+      height: 25px;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      z-index: 100;
+      pointer-events: none;
+    }
+    
+    @keyframes starFall {
+      0% {
+        transform: translateY(0) rotate(0deg) scale(0);
+        opacity: 0;
+      }
+      20% {
+        transform: translateY(20px) rotate(72deg) scale(1);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(var(--fall-distance)) rotate(360deg) scale(0.5);
+        opacity: 1;
+      }
+    }
+    
+    .dog-eating .dog-mouth {
+      animation: munch 0.15s ease-in-out 4;
+    }
+    
+    @keyframes munch {
+      0%, 100% { 
+        height: 15px;
+        border-radius: 0 0 15px 15px;
+      }
+      50% { 
+        height: 8px;
+        border-radius: 0 0 10px 10px;
+      }
+    }
+    
+    .dog-pooping .dog-body::after {
+      content: '';
+      position: absolute;
+      right: -20px;
+      bottom: 10px;
+      width: 20px;
+      height: 20px;
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+      animation: poopStar 0.5s ease-out forwards;
+    }
+    
+    @keyframes poopStar {
+      0% { transform: scale(0); opacity: 0; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(1) translateX(10px); opacity: 1; }
+    }
+    
+    .chat-container {
+      height: calc(100vh - 200px);
+      overflow-y: auto;
+    }
+    
+    .chat-container::-webkit-scrollbar { width: 4px; }
+    .chat-container::-webkit-scrollbar-track { background: transparent; }
+    .chat-container::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 2px; }
+    
+    .message {
+      animation: fadeIn 0.3s ease-out;
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    .hint-pulse {
+      animation: hintPulse 2s ease-in-out infinite;
+    }
+    
+    @keyframes hintPulse {
+      0%, 100% { opacity: 0.4; }
+      50% { opacity: 0.8; }
+    }
+    
+    .complete-btn {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.2) 0%, rgba(22, 163, 74, 0.2) 100%);
+      border: 1px solid rgba(34, 197, 94, 0.3);
+      transition: all 0.3s;
+    }
+    
+    .complete-btn:hover {
+      background: linear-gradient(135deg, rgba(34, 197, 94, 0.4) 0%, rgba(22, 163, 74, 0.4) 100%);
+      border-color: rgba(34, 197, 94, 0.5);
+    }
+    
+    .ambient-glow {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.15;
+      pointer-events: none;
+    }
+    
+    .glow-1 {
+      top: 10%;
+      right: 20%;
+      background: #8b5cf6;
+    }
+    
+    .glow-2 {
+      bottom: 20%;
+      left: 10%;
+      background: #6366f1;
+    }
+  </style>
+</head>
+<body class="text-white overflow-hidden">
+  <div class="ambient-glow glow-1"></div>
+  <div class="ambient-glow glow-2"></div>
+
+  <div class="h-screen flex">
+    <!-- 左侧聊天区 -->
+    <div class="w-1/2 p-6 flex flex-col border-r border-white/5">
+      <header class="mb-6">
+        <h1 class="text-2xl font-light tracking-tight mb-1">掌控</h1>
+        <p class="text-white/40 text-xs">和小狗聊聊，让它帮你整理今天要做的事</p>
+      </header>
+      
+      <div id="chat" class="chat-container flex-1 space-y-3 mb-4 pr-2">
+        <div class="message">
+          <div class="glass rounded-2xl px-4 py-3 text-sm text-white/80 max-w-[85%]">
+            汪！我是阿汪～ 告诉我你今天想做什么，或者点击我让我随机给你一个小任务！🐕
+          </div>
+        </div>
+      </div>
+      
+      <div class="glass rounded-xl p-3">
+        <div class="flex items-center gap-3">
+          <input 
+            id="input"
+            type="text" 
+            placeholder="告诉小狗你今天想做什么..."
+            class="flex-1 bg-transparent outline-none text-white placeholder-white/30 text-sm"
+            onkeydown="if(event.key==='Enter')sendMessage()"
+          >
+          <button 
+            onclick="sendMessage()"
+            class="text-white/40 hover:text-white transition text-sm px-4 py-2"
+          >
+            发送
+          </button>
+        </div>
+      </div>
+      
+      <div class="text-center mt-4">
+        <p class="text-white/20 text-xs">FIVE Team</p>
+      </div>
+    </div>
+    
+    <!-- 右侧小狗区 -->
+    <div class="w-1/2 p-6 flex flex-col items-center justify-center relative">
+      <!-- 星星瓶 -->
+      <div class="absolute top-6 right-6">
+        <div class="text-center mb-2">
+          <span class="text-white/40 text-xs">完成瓶</span>
+          <span id="starCount" class="text-amber-400 text-xs ml-2">0 ⭐</span>
+        </div>
+        <div class="star-jar glow">
+          <div id="starsContainer" class="stars-container"></div>
+        </div>
+      </div>
+      
+      <!-- 小狗 -->
+      <div class="flex flex-col items-center">
+        <div id="dogHint" class="text-white/40 text-xs mb-4 hint-pulse">点击小狗获取任务</div>
+        
+        <div id="dog" class="dog-container" onclick="dogInteract()">
+          <div class="dog-ear left"></div>
+          <div class="dog-ear right"></div>
+          <div class="dog-body"></div>
+          <div class="dog-head"></div>
+          <div class="dog-eye left"></div>
+          <div class="dog-eye right"></div>
+          <div class="dog-blush left"></div>
+          <div class="dog-blush right"></div>
+          <div class="dog-nose"></div>
+          <div class="dog-mouth"></div>
+          <div id="tongue" class="dog-tongue"></div>
+          <div class="dog-tail"></div>
+          <div class="dog-leg front-left"></div>
+          <div class="dog-leg front-right"></div>
+          <div class="dog-leg back-left"></div>
+          <div class="dog-leg back-right"></div>
+        </div>
+        
+        <!-- 纸条显示区 -->
+        <div id="notesArea" class="mt-8 w-full max-w-sm min-h-[150px] relative">
+        </div>
+      </div>
+      
+      <!-- 操作提示 -->
+      <div id="actionHint" class="absolute bottom-6 text-center text-white/30 text-xs">
+        完成任务后，点击纸条上的"✓完成"喂给小狗
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let tasks = [];
+    let completedCount = 0;
+    let isAnimating = false;
+    
+    // 随机任务列表
+    const randomTasks = [
+      "喝一杯水，保持水分充足",
+      "站起来伸展一下身体",
+      "整理一下桌面",
+      "给朋友发一条问候消息",
+      "看5分钟窗外的风景",
+      "做3个深呼吸放松一下",
+      "写下今天的一件感恩的事",
+      "检查一下待办事项",
+      "休息眼睛5分钟",
+      "听一首喜欢的歌",
+      "给自己倒杯茶或咖啡",
+      "整理一下文件夹",
+      "规划明天的第一件事",
+      "做10个简单的拉伸",
+      "清理一下浏览器标签页",
+      "给家人打个电话",
+      "写三句今日小结",
+      "收拾一下房间一角",
+      "看一篇短文章学点新东西",
+      "给植物浇浇水"
+    ];
+    
+    // 小狗回复模板
+    const dogReplies = {
+      greeting: [
+        "汪汪！你好呀～有什么想做的事告诉阿汪吧！",
+        "嘿嘿，阿汪在呢！今天想完成什么？",
+        "汪～主人好！点击我可以获取随机任务哦！"
+      ],
+      gotTask: [
+        "汪！阿汪记住了～让我把任务吐出来给你！",
+        "收到收到！点击我就能看到纸条啦～",
+        "好嘞！阿汪已经准备好纸条了，点我！"
+      ],
+      encourage: [
+        "汪汪！加油加油，阿汪相信你！",
+        "呜汪～主人最棒了，一定能完成的！",
+        "嘿嘿，有阿汪陪着你呢～"
+      ],
+      confused: [
+        "汪？阿汪没太听懂...要不点击我获取一个随机任务？",
+        "呜...阿汪有点迷糊，再说一遍好不好？",
+        "汪汪？可以告诉阿汪具体想做什么吗～"
+      ]
+    };
+    
+    // 简单的任务提取
+    function extractTasks(text) {
+      const extractedTasks = [];
+      
+      // 按常见分隔符分割
+      const parts = text.split(/[，,、；;和还有以及]/);
+      
+      // 关键词检测
+      const actionWords = ['要', '想', '得', '需要', '打算', '准备', '去', '做', '写', '看', '学', '买', '吃', '喝', '整理', '完成', '开始', '继续'];
+      
+      parts.forEach(part => {
+        const trimmed = part.trim();
+        if (trimmed.length >= 2 && trimmed.length <= 30) {
+          // 检查是否包含动作词或看起来像任务
+          const hasAction = actionWords.some(word => trimmed.includes(word));
+          const looksLikeTask = /^[我今明]/.test(trimmed) || hasAction;
+          
+          if (looksLikeTask || parts.length > 1) {
+            // 清理任务文本
+            let task = trimmed
+              .replace(/^我(要|想|得|需要|打算|准备)?/, '')
+              .replace(/^今天?/, '')
+              .replace(/^还(要|得)?/, '')
+              .trim();
+            
+            if (task.length >= 2) {
+              extractedTasks.push(task);
+            }
+          }
+        }
+      });
+      
+      return extractedTasks;
+    }
+    
+    // 获取随机回复
+    function getRandomReply(type) {
+      const replies = dogReplies[type];
+      return replies[Math.floor(Math.random() * replies.length)];
+    }
+    
+    // 小狗交互
+    function dogInteract() {
+      if (isAnimating) return;
+      
+      if (tasks.length > 0) {
+        spitNote(tasks[0]);
+      } else {
+        const randomTask = randomTasks[Math.floor(Math.random() * randomTasks.length)];
+        tasks.push({ id: Date.now(), text: randomTask });
+        spitNote(tasks[0]);
+      }
+    }
+    
+    // 小狗吐出纸条
+    function spitNote(task) {
+      if (!task) return;
+      isAnimating = true;
+      
+      const tongue = document.getElementById('tongue');
+      tongue.classList.add('out');
+      
+      setTimeout(() => {
+        const note = document.createElement('div');
+        note.className = 'paper-note spit-out';
+        note.id = `note-${task.id}`;
+        note.innerHTML = `
+          <div class="font-medium text-stone-700 mb-2">${task.text}</div>
+          <button onclick="completeTask(${task.id})" class="complete-btn text-green-400 text-xs px-3 py-1 rounded-full">
+            ✓ 完成
+          </button>
+        `;
+        
+        document.getElementById('notesArea').appendChild(note);
+        
+        setTimeout(() => {
+          tongue.classList.remove('out');
+          isAnimating = false;
+        }, 300);
+      }, 400);
+      
+      tasks = tasks.filter(t => t.id !== task.id);
+    }
+    
+    // 完成任务
+    function completeTask(taskId) {
+      if (isAnimating) return;
+      isAnimating = true;
+      
+      const note = document.getElementById(`note-${taskId}`);
+      if (!note) return;
+      
+      note.innerHTML = '';
+      note.classList.add('crumpled');
+      
+      setTimeout(() => {
+        note.classList.remove('crumpled');
+        note.classList.add('eaten');
+        
+        const dog = document.getElementById('dog');
+        dog.classList.add('dog-eating');
+        
+        setTimeout(() => {
+          dog.classList.remove('dog-eating');
+          note.remove();
+          
+          setTimeout(() => {
+            createFallingStar();
+            completedCount++;
+            document.getElementById('starCount').textContent = `${completedCount} ⭐`;
+            
+            addStarToJar();
+            addDogMessage(getEncouragement());
+            
+            isAnimating = false;
+          }, 300);
+        }, 500);
+      }, 500);
+    }
+    
+    // 创建掉落的星星
+    function createFallingStar() {
+      const dog = document.getElementById('dog');
+      const jar = document.querySelector('.star-jar');
+      const dogRect = dog.getBoundingClientRect();
+      const jarRect = jar.getBoundingClientRect();
+      
+      const star = document.createElement('div');
+      star.className = 'falling-star';
+      star.style.left = `${dogRect.right - 30}px`;
+      star.style.top = `${dogRect.bottom - 60}px`;
+      star.style.setProperty('--fall-distance', `${jarRect.top - dogRect.bottom + 100}px`);
+      star.style.animation = 'starFall 1s ease-in forwards';
+      
+      document.body.appendChild(star);
+      
+      setTimeout(() => star.remove(), 1000);
+    }
+    
+    // 添加星星到瓶子
+    function addStarToJar() {
+      const container = document.getElementById('starsContainer');
+      if (container.children.length < 20) {
+        const star = document.createElement('div');
+        star.className = 'mini-star';
+        container.appendChild(star);
+      }
+    }
+    
+    // 获取鼓励语
+    function getEncouragement() {
+      const phrases = [
+        "汪汪！好棒！⭐ 又完成一件事！",
+        "呜汪～ 你太厉害了！继续加油！",
+        "汪！星星好好吃！再来一个吧～",
+        "摇尾巴～ 主人最棒了！",
+        "汪汪汪！今天的你闪闪发光！",
+        "嘿嘿，任务完成！给你一个大大的赞！"
+      ];
+      return phrases[Math.floor(Math.random() * phrases.length)];
+    }
+    
+    // 添加小狗消息
+    function addDogMessage(text) {
+      const chat = document.getElementById('chat');
+      const div = document.createElement('div');
+      div.className = 'message';
+      div.innerHTML = `
+        <div class="glass rounded-2xl px-4 py-3 text-sm text-white/80 max-w-[85%]">
+          ${text}
+        </div>
+      `;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+    
+    // 添加用户消息
+    function addUserMessage(text) {
+      const chat = document.getElementById('chat');
+      const div = document.createElement('div');
+      div.className = 'message text-right';
+      div.innerHTML = `
+        <div class="inline-block bg-indigo-500/20 text-white rounded-2xl px-4 py-3 text-sm max-w-[85%]">
+          ${text}
+        </div>
+      `;
+      chat.appendChild(div);
+      chat.scrollTop = chat.scrollHeight;
+    }
+    
+    // 发送消息（纯前端版本）
+    function sendMessage() {
+      const input = document.getElementById('input');
+      const text = input.value.trim();
+      if (!text) return;
+      
+      input.value = '';
+      addUserMessage(text);
+      
+      // 简单判断消息类型
+      const greetings = ['你好', '嗨', 'hi', 'hello', '早', '晚上好', '下午好'];
+      const isGreeting = greetings.some(g => text.toLowerCase().includes(g));
+      
+      // 提取任务
+      const extractedTasks = extractTasks(text);
+      
+      setTimeout(() => {
+        if (isGreeting && extractedTasks.length === 0) {
+          addDogMessage(getRandomReply('greeting'));
+        } else if (extractedTasks.length > 0) {
+          // 添加任务到队列
+          extractedTasks.forEach(task => {
+            tasks.push({ id: Date.now() + Math.random(), text: task });
+          });
+          addDogMessage(getRandomReply('gotTask'));
+          
+          // 自动吐出第一个任务
+          setTimeout(() => {
+            if (tasks.length > 0 && !isAnimating) {
+              dogInteract();
+            }
+          }, 800);
+        } else if (text.length < 5) {
+          addDogMessage(getRandomReply('confused'));
+        } else {
+          // 把整句话当作一个任务
+          tasks.push({ id: Date.now(), text: text });
+          addDogMessage(getRandomReply('gotTask'));
+          
+          setTimeout(() => {
+            if (tasks.length > 0 && !isAnimating) {
+              dogInteract();
+            }
+          }, 800);
+        }
+      }, 500);
+    }
+  </script>
+</body>
+</html>
